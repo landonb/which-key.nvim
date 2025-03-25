@@ -234,6 +234,12 @@ function M.execute(state, key, node)
       keystr = '"' .. vim.v.register .. keystr
     end
   end
+  -- If if-key-trigger nmap fires via i_CTRL-O, send <C-O>,
+  -- otherwise the feedkey inserts the literal keystr.
+  if vim.api.nvim_get_mode().mode == "niI" then
+    keystr = "<C-O>" .. keystr
+  end
+
   Util.debug("feedkeys", tostring(state.mode), keystr)
   local feed = vim.api.nvim_replace_termcodes(keystr, true, true, true)
   vim.api.nvim_feedkeys(feed, "mit", false)
